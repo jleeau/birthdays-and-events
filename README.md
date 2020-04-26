@@ -11,11 +11,11 @@ f00e01b873e6344ab2dde269da4966768828bb1d
 1. Setup API access to BambooHR **DONE**
 2. Access basic data **DONE**
 3. Access all birthday, work anniversary **DONE**
-4. Write alternate function to look up holiday data "Get a list of Who's Out"
-5. Schedule to call API every day
-6. Format data into a Slack post
-7. Connect to Slack API
-8. Post into Slack
+4. Write alternate function to look up holiday data "Get a list of Who's Out" *ON HOLD*
+5. Format data into a Slack post
+6. Schedule to call API every day
+7. Connect to Slack API **DONE**
+8. Post into Slack **DONE**
 
 
 
