@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
-const convert = require('xml-js');          //https://www.npmjs.com/package/xml-js
+require('dotenv').config();
 
 const app = express();
 
@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
-let url = new URL('https://f00e01b873e6344ab2dde269da4966768828bb1d:x@api.bamboohr.com/api/gateway.php/shieldgeo/v1/employees/0');
+let url = new URL(`https://${process.env.BAMBOO_API_KEY}:x@api.bamboohr.com/api/gateway.php/${process.env.BAMBOO_SUBDOMAIN}/v1/employees/0`);
 
 const getData = async url => {
     try {
