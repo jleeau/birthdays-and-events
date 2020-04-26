@@ -9,15 +9,18 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+//Set API vars
+const baseURL = `https://${process.env.BAMBOO_API_KEY}:x@api.bamboohr.com/api/gateway.php/${process.env.BAMBOO_SUBDOMAIN}/v1/`;
+const employeePath = `employees/`;
+const employeeFields = `firstName,preferredName,birthday,hireDate,originalHireDate,status,department,division`;
+const holidayPath = 'time_off/whos_out/?start=2020-01-01';
+const holidayFields = '';
 
-let url = new URL(`https://${process.env.BAMBOO_API_KEY}:x@api.bamboohr.com/api/gateway.php/${process.env.BAMBOO_SUBDOMAIN}/v1/employees/0`);
 
-const getData = async url => {
+const getData = async (url, fields) => {
     try {
         //Set query string params. This step is needed as npm fetch doesn't handle qs
-        params = {
-            fields: 'firstName,lastName,preferredName,birthday,hireDate,originalHireDate,status,department,division,supervisor'
-        }
+        params = { fields: fields };
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
         let res = await fetch(url, {
@@ -26,40 +29,35 @@ const getData = async url => {
                 accept: 'application/json'
             }
         });
-
-        if (res.status >= 200 || res.status <= 299) {
-            console.log('Done fetching: ' + res.status);
-            return await res.json();            //https://f00e01b873e6344ab2dde269da4966768828bb1d:x@api.bamboohr.com/api/gateway.php/shieldgeo/v1/employees/directory
+        if (res.status === 200) {
+            return await res.json();
+        } else {
+            console.log(`Failed to fetch from BambooHR (${res.status}): ${res.headers.get('X-BambooHR-Error-Message')}`);
+            return null;
         }
-
-        console.log('Failed to fetch anything from BambooHR... ' + res.status + ' ' + res.headers.get('X-BambooHR-Error-Message'));
-        return null;
     } catch(err) {   
         console.log('Error: ' + err);
+        return null;
     }
-    
-    
 };
 
-let main = async () => {
+
+let getEmployeeData = async (employeeId, fields = null) => {
     try {
-        let data = await getData(url);
-        if (data) {
-            console.log(data);
-        } else {
-            console.log('No result found...');
-        }
+        let url = new URL(baseURL + employeePath + 'directory');
+        return await getData(url, employeeFields);
     } catch(err) {
         console.log(err);
+    }    
+}
+
+let main = async () => {
+    //Grab employee fields
+    let dir = await getEmployeeData('directory');
+    let employees = dir.employees;
+    for (employee of employees) {
+        console.log(`${employee.id} ${employee.firstName} ${employee.preferredName}`);
     }
 }
 
 main();
-
-
-var getAttr = (arr, search) => {
-    if (arr) {
-        return employee.field.find(field => field._attributes.id === search)._text;
-    }
-    return null;
-}
