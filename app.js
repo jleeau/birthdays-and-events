@@ -94,12 +94,35 @@ let main = async () => {
     // for (employee of employees) {
     //     console.log(`${employee.id} ${employee.firstName} ${employee.preferredName}`);
     // }
+    let employeeIds = [];               //Store a list of all employee ids found in directoory
+    let dir;
 
-    let employee = await getEmployeeData('0', employeeFields);
-    if (employee) {
-        let birthdayMsg = await buildSlackMessage(employee);
-        postToSlack(birthdayMsg);
+    dir = await getEmployeeData('directory');
+    console.log(dir.employees[0]);
+    if (dir) {
+        for (emp of dir.employees) {
+            employeeIds.push(emp.id);
+        }
     }
+    
+
+    if (employeeIds && employeeIds.length > 0) {
+        let test;
+        for (let i = 0; i < 5; i++) {
+            test = await getEmployeeData(employeeIds[i].toString(), employeeFields);
+            console.log(test);
+        }
+        
+    }
+    // let employee = await getEmployeeData('0', employeeFields);
+    // console.log(employee);
+
+
+    // if (employee) {
+    //     console.log(employee);
+    //     let birthdayMsg = await buildSlackMessage(employee);
+    //     //postToSlack(birthdayMsg);
+    // }
 }
 
 main();
