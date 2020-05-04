@@ -8,7 +8,7 @@ const app = express();
 //Bodyparser config
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
- 
+
 //Set API vars
 const baseURL = `https://${process.env.BAMBOO_API_KEY}:x@api.bamboohr.com/api/gateway.php/${process.env.BAMBOO_SUBDOMAIN}/v1/`;
 const employeePath = `employees/`;
@@ -116,7 +116,7 @@ let buildName = (employee) => {
 
 let main = async () => {
     // Fetch all employees from directory first
-    let employeeIds = [];               //Store a list of all employee ids found in directoory
+    let employeeIds = [];               //Store a list of all employee ids found in directory
     let dir = await getEmployeeData('directory');
     if (dir && dir.employees && dir.employees.length > 0) {
         for (emp of dir.employees) {
@@ -130,11 +130,12 @@ let main = async () => {
     if (employeeIds && employeeIds.length > 0) {
         console.log(`Checking events for ${employeeIds.length} employees...`);
         for (let i = 0; i < employeeIds.length; i++) {
-            let employee = await getEmployeeData(employeeIds[i].toString(), employeeFields);        // employee stored as object
+            let employee = await getEmployeeData(employeeIds[i].toString(), employeeFields);        // employee stored as an object
             
             if (employee && employee.status === 'Active') {
                 let name = buildName(employee);
-                let today = new Date();
+                let today = new Date().toDateString();
+
                 // formatted date of employee's birthday this year, e.g. "Sun May 03 2020". Used for comparison to today without time.
                 let birthday = employee.birthday ? new Date(`${employee.birthday}-${new Date().getFullYear()}`).toDateString() : null;
                 //Check if there's any hire date, AND make sure the original hire date is at least a week ago to filter out newly added peeps
